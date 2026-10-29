@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DistriBox — Guía de uso</title>
+<meta name="description" content="Manual de uso de DistriBox: configuración inicial, ciclo diario de jornada, reasignación de box y análisis de capacidad perdida.">
+<style>
+:root{
+  --fuente:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --fondo:#f2f5f7; --superficie:#fff; --superficie-2:#eceff3;
+  --borde:#d2dae1; --borde-fuerte:#b2bfca;
+  --texto:#14212c; --texto-2:#50616e; --texto-3:#7a8a98;
+  --marca:#0a5a6e; --marca-2:#0d6e86; --marca-suave:#e0eff3;
+  --lateral:#0b3c4a; --lateral-act:#38b3cf;
+  --ok:#146b36; --ok-bg:#e2f3e8; --ok-bd:#8fc7a4;
+  --info:#1a4a87; --info-bg:#e4ecf8; --info-bd:#9bb6dd;
+  --alerta:#8a4f00; --alerta-bg:#fcefdb; --alerta-bd:#e0b878;
+  --critico:#9c211b; --critico-bg:#fae7e6; --critico-bd:#dda39f;
+  --morado:#56409a; --morado-bg:#ece7fa; --morado-bd:#b4a4e4;
+  --libre:#0a6f6a; --libre-bg:#ddf1f0; --libre-bd:#8cc9c6;
+  --neutro:#58666f; --neutro-bg:#eaeef1; --neutro-bd:#c2ccd4;
+  --sombra:0 1px 2px rgba(14,32,45,.05),0 2px 8px rgba(14,32,45,.06);
+  --r:10px; --r-s:7px;
+}
+@media(prefers-color-scheme:dark){:root:not([data-tema="claro"]){
+  --fondo:#0d151c; --superficie:#151f28; --superficie-2:#1c2832;
+  --borde:#2a3945; --borde-fuerte:#3b4d5c;
+  --texto:#e6edf2; --texto-2:#a2b2be; --texto-3:#7f909d;
+  --marca:#4cb5d2; --marca-2:#67c7e0; --marca-suave:#102e38;
+  --ok:#68d294; --ok-bg:#0f2e1c; --ok-bd:#1f5536;
+  --info:#86b2f0; --info-bg:#11253f; --info-bd:#2a4972;
+  --alerta:#eab66a; --alerta-bg:#33250f; --alerta-bd:#5d4620;
+  --critico:#f0918b; --critico-bg:#361513; --critico-bd:#642b27;
+  --morado:#b3a2e8; --morado-bg:#221c3a; --morado-bd:#403565;
+  --libre:#5ccec9; --libre-bg:#0b2c2b; --libre-bd:#1d5250;
+  --neutro:#9aa9b4; --neutro-bg:#1f2a33; --neutro-bd:#36454f;
+  --sombra:0 1px 2px rgba(0,0,0,.4),0 2px 10px rgba(0,0,0,.3);
+}}
+:root[data-tema="oscuro"]{
+  --fondo:#0d151c; --superficie:#151f28; --superficie-2:#1c2832;
+  --borde:#2a3945; --borde-fuerte:#3b4d5c;
+  --texto:#e6edf2; --texto-2:#a2b2be; --texto-3:#7f909d;
+  --marca:#4cb5d2; --marca-2:#67c7e0; --marca-suave:#102e38;
+  --ok:#68d294; --ok-bg:#0f2e1c; --ok-bd:#1f5536;
+  --info:#86b2f0; --info-bg:#11253f; --info-bd:#2a4972;
+  --alerta:#eab66a; --alerta-bg:#33250f; --alerta-bd:#5d4620;
+  --critico:#f0918b; --critico-bg:#361513; --critico-bd:#642b27;
+  --morado:#b3a2e8; --morado-bg:#221c3a; --morado-bd:#403565;
+  --libre:#5ccec9; --libre-bg:#0b2c2b; --libre-bd:#1d5250;
+  --neutro:#9aa9b4; --neutro-bg:#1f2a33; --neutro-bd:#36454f;
+  --sombra:0 1px 2px rgba(0,0,0,.4),0 2px 10px rgba(0,0,0,.3);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{margin:0;font-family:var(--fuente);background:var(--fondo);color:var(--texto);
+     font-size:16px;line-height:1.65;-webkit-text-size-adjust:100%}
+h1,h2,h3,h4{line-height:1.25;letter-spacing:-.015em;margin:0}
+code{font-family:var(--mono);font-size:.88em;background:var(--superficie-2);padding:2px 6px;
+     border-radius:5px;border:1px solid var(--borde)}
+a{color:var(--marca)}
+
+.cab{background:var(--lateral);color:#cfe4ea;padding:0;position:sticky;top:0;z-index:40;
+     border-bottom:1px solid rgba(255,255,255,.12)}
+.cab-int{max-width:1120px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{width:34px;height:34px;border-radius:9px;background:var(--lateral-act);display:grid;
+      place-items:center;color:#06252e;font-weight:800;font-size:14px;flex:none}
+.cab-nom{font-size:17px;font-weight:700;color:#fff}
+.cab-sub{font-size:11px;opacity:.8}
+.cab-acc{margin-left:auto;display:flex;gap:7px}
+.btn-cab{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#cfe4ea;
+         border-radius:var(--r-s);padding:5px 11px;cursor:pointer;font-size:12.5px;font-family:inherit}
+.btn-cab:hover{background:rgba(255,255,255,.2);color:#fff}
+
+.env{max-width:1120px;margin:0 auto;padding:0 20px 80px;display:grid;
+     grid-template-columns:232px 1fr;gap:34px;align-items:start}
+.indice{position:sticky;top:74px;font-size:13.5px;padding-top:28px}
+.indice-t{font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--texto-3);
+          font-weight:700;margin-bottom:9px}
+.indice a{display:block;padding:4px 10px;color:var(--texto-2);text-decoration:none;
+          border-left:2px solid var(--borde);line-height:1.4}
+.indice a:hover{color:var(--marca);border-left-color:var(--marca);background:var(--superficie)}
+.indice a.sub{padding-left:22px;font-size:12.5px}
+
+.cuerpo{min-width:0;padding-top:28px}
+.portada{background:var(--superficie);border:1px solid var(--borde);border-radius:var(--r);
+         padding:28px;margin-bottom:26px;box-shadow:var(--sombra);
+         border-top:4px solid var(--marca)}
+.portada h1{font-size:30px;margin-bottom:6px}
+.portada .bajada{font-size:17px;color:var(--texto-2);margin:0 0 16px}
+.meta-fila{display:flex;gap:9px;flex-wrap:wrap;font-size:12.5px}
+.meta{background:var(--superficie-2);border:1px solid var(--borde);border-radius:999px;padding:3px 11px;
+      color:var(--texto-2)}
+
+section{margin-bottom:38px;scroll-margin-top:74px}
+section>h2{font-size:23px;padding-bottom:9px;border-bottom:2px solid var(--marca);
+           margin-bottom:16px;display:flex;align-items:baseline;gap:11px}
+.num-sec{font-family:var(--mono);font-size:14px;color:var(--marca);font-weight:700}
+h3{font-size:17.5px;margin:24px 0 9px}
+h4{font-size:15px;margin:18px 0 6px;color:var(--texto-2)}
+p{margin:0 0 13px}
+ul,ol{margin:0 0 13px;padding-left:22px}
+li{margin-bottom:6px}
+
+.panel{background:var(--superficie);border:1px solid var(--borde);border-radius:var(--r);
+       padding:17px;margin-bottom:16px;box-shadow:var(--sombra)}
+.banda{border-radius:var(--r-s);padding:12px 15px;font-size:14.5px;margin:0 0 15px;
+       border:1px solid transparent;display:flex;gap:11px;align-items:flex-start}
+.banda p:last-child{margin-bottom:0}
+.banda-ok{background:var(--ok-bg);border-color:var(--ok-bd)}
+.banda-info{background:var(--info-bg);border-color:var(--info-bd)}
+.banda-alerta{background:var(--alerta-bg);border-color:var(--alerta-bd)}
+.banda-critico{background:var(--critico-bg);border-color:var(--critico-bd)}
+.ico{font-size:17px;line-height:1.3;flex:none}
+
+.tabla-env{overflow-x:auto;margin-bottom:16px}
+table{border-collapse:collapse;width:100%;font-size:14px;background:var(--superficie)}
+th,td{text-align:left;padding:9px 11px;border:1px solid var(--borde);vertical-align:top}
+th{background:var(--superficie-2);font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;
+   color:var(--texto-2);font-weight:700;white-space:nowrap}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+
+.pasos{counter-reset:p;margin-bottom:16px}
+.paso{display:grid;grid-template-columns:34px 1fr;gap:14px;margin-bottom:16px;align-items:start}
+.paso-n{width:32px;height:32px;border-radius:50%;background:var(--marca);color:#fff;display:grid;
+        place-items:center;font-size:14px;font-weight:700;flex:none}
+.paso h4{margin:3px 0 4px;font-size:15.5px;color:var(--texto)}
+.paso p{margin-bottom:7px;font-size:14.5px}
+
+.estados{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:10px;margin-bottom:16px}
+.est{border:1px solid var(--borde);border-left:5px solid;border-radius:var(--r-s);padding:11px 13px;
+     background:var(--superficie)}
+.est-n{font-weight:700;font-size:14.5px;display:flex;align-items:center;gap:7px}
+.est-d{font-size:13px;color:var(--texto-2);margin-top:3px}
+.e1{border-left-color:var(--ok)} .e1 .est-n{color:var(--ok)}
+.e2{border-left-color:var(--info)} .e2 .est-n{color:var(--info)}
+.e3{border-left-color:var(--libre)} .e3 .est-n{color:var(--libre)}
+.e4{border-left-color:var(--alerta)} .e4 .est-n{color:var(--alerta)}
+.e5{border-left-color:var(--morado)} .e5 .est-n{color:var(--morado)}
+.e6{border-left-color:var(--critico)} .e6 .est-n{color:var(--critico)}
+.e7{border-left-color:var(--neutro)} .e7 .est-n{color:var(--neutro)}
+
+.mods{display:grid;grid-template-columns:repeat(auto-fit,minmax(252px,1fr));gap:11px;margin-bottom:16px}
+.mod{background:var(--superficie);border:1px solid var(--borde);border-radius:var(--r-s);padding:12px 14px}
+.mod-n{font-family:var(--mono);font-size:11.5px;color:var(--marca);font-weight:700}
+.mod-t{font-weight:650;font-size:15px;margin:1px 0 4px}
+.mod-d{font-size:13.5px;color:var(--texto-2)}
+
+.faq{border-bottom:1px solid var(--borde)}
+.faq summary{cursor:pointer;padding:12px 2px;font-weight:650;font-size:15.5px;list-style:none;
+             display:flex;gap:10px;align-items:flex-start}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::before{content:"▸";color:var(--marca);font-size:13px;line-height:1.6;transition:transform .15s}
+.faq[open] summary::before{transform:rotate(90deg)}
+.faq div{padding:0 0 13px 22px;font-size:14.5px;color:var(--texto-2)}
+.faq div p:last-child{margin-bottom:0}
+
+.flujo{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;margin-bottom:16px}
+.flujo-p{flex:1 1 160px;background:var(--superficie);border:1px solid var(--borde);padding:12px;
+         text-align:center;position:relative}
+.flujo-p:first-child{border-radius:var(--r-s) 0 0 var(--r-s)}
+.flujo-p:last-child{border-radius:0 var(--r-s) var(--r-s) 0}
+.flujo-h{font-family:var(--mono);font-size:11px;color:var(--marca);font-weight:700}
+.flujo-t{font-weight:650;font-size:14px;margin:2px 0 3px}
+.flujo-d{font-size:12.5px;color:var(--texto-2)}
+
+.glos{font-size:14.5px}
+.glos dt{font-weight:650;margin-top:12px;color:var(--texto)}
+.glos dd{margin:2px 0 0;color:var(--texto-2)}
+
+.pie{border-top:1px solid var(--borde);padding-top:18px;margin-top:40px;font-size:13px;color:var(--texto-3)}
+
+@media(max-width:900px){
+  .env{grid-template-columns:1fr;gap:0}
+  .indice{position:static;padding-top:18px;border-bottom:1px solid var(--borde);padding-bottom:14px;
+          margin-bottom:8px;columns:2;column-gap:18px}
+  .indice a.sub{display:none}
+  .cuerpo{padding-top:16px}
+  body{font-size:15.5px}
+  .portada h1{font-size:25px}
+}
+@media print{
+  .cab,.indice,.btn-cab{display:none!important}
+  .env{display:block;max-width:none;padding:0}
+  body{background:#fff;font-size:11.5pt}
+  section{break-inside:avoid-page}
+  .panel,.banda,.paso,table{break-inside:avoid}
+  .faq{break-inside:avoid}
+  .faq div{display:block!important}
+  a{color:inherit;text-decoration:none}
+}
+</style>
+</head>
+<body>
+
+<header class="cab">
+  <div class="cab-int">
+    <div class="logo" aria-hidden="true">DB</div>
+    <div>
+      <div class="cab-nom">DistriBox</div>
+      <div class="cab-sub">Guía de uso</div>
+    </div>
+    <div class="cab-acc">
+      <button class="btn-cab" id="tema">◐ Tema</button>
+      <button class="btn-cab" onclick="window.print()">⎙ Imprimir / PDF</button>
+    </div>
+  </div>
+</header>
+
+<div class="env">
+
+  <nav class="indice">
+    <div class="indice-t">Contenido</div>
+    <a href="#que-es">1 · Qué es DistriBox</a>
+    <a href="#instalar">2 · Cómo abrirla</a>
+    <a href="#configurar">3 · Configuración inicial</a>
+    <a href="#excel" class="sub">Cargar desde Excel</a>
+    <a href="#cero" class="sub">Empezar desde cero</a>
+    <a href="#dia">4 · El día a día</a>
+    <a href="#ausencia" class="sub">Registrar una ausencia</a>
+    <a href="#reasignar" class="sub">Reasignar un box</a>
+    <a href="#cerrar" class="sub">Cerrar la jornada</a>
+    <a href="#estados">5 · Estados del box</a>
+    <a href="#modulos">6 · Los módulos</a>
+    <a href="#capacidad">7 · Capacidad perdida</a>
+    <a href="#guardar">8 · Guardar y respaldar</a>
+    <a href="#privacidad">9 · Privacidad</a>
+    <a href="#faq">10 · Preguntas frecuentes</a>
+    <a href="#glosario">11 · Glosario</a>
+  </nav>
+
+  <main class="cuerpo">
+
+    <div class="portada">
+      <h1>Guía de uso de DistriBox</h1>
+      <p class="bajada">Distribución y uso de box clínicos para establecimientos de la red asistencial chilena.</p>
+      <div class="meta-fila">
+        <span class="meta">Versión 2.0</span>
+        <span class="meta">CESFAM · CECOSF · COSAM · PSR · SAR · SAPU</span>
+        <span class="meta">Sin instalación ni servidor</span>
+        <span class="meta">Los datos no salen del dispositivo</span>
+      </div>
+    </div>
+
+    <!-- 1 -->
+    <section id="que-es">
+      <h2><span class="num-sec">01</span> Qué es DistriBox</h2>
+
+      <p>DistriBox es una herramienta web que resuelve dos cosas distintas que suelen estar
+      mezcladas en una misma planilla Excel:</p>
+
+      <ul>
+        <li><b>La distribución programada</b>: quién debería ocupar cada box en cada bloque horario.
+        Eso es el plan, y cambia pocas veces al mes.</li>
+        <li><b>Lo que efectivamente pasó hoy</b>: quién faltó, qué box quedó libre, quién lo ocupó
+        y cuánta capacidad instalada se perdió. Eso cambia todos los días y en la mayoría de los
+        establecimientos no queda registrado en ninguna parte.</li>
+      </ul>
+
+      <div class="banda banda-info">
+        <span class="ico" aria-hidden="true">◆</span>
+        <div><p><b>La pregunta que DistriBox responde y una planilla no.</b> Un profesional avisa que
+        no viene. Su box queda vacío. ¿Quién lo usa? Esa decisión se toma en minutos y rara vez deja
+        rastro. A fin de mes nadie puede decir cuántas horas de box se perdieron, por qué motivo ni
+        en qué franja horaria.</p></div>
+      </div>
+
+      <h3>Qué obtiene el establecimiento</h3>
+      <div class="tabla-env">
+      <table>
+        <tr><th>Nivel</th><th>Para quién</th><th>Qué entrega</th></tr>
+        <tr><td><b>Operativo</b></td><td>SOME, mesón, encargado de agenda</td>
+          <td>Una pizarra digital con el estado real de cada box ahora, y una bandeja que propone
+          a quién asignarle un box que quedó libre.</td></tr>
+        <tr><td><b>Táctico</b></td><td>Jefatura técnica, encargados de sector</td>
+          <td>Qué box están saturados, cuáles subutilizados, en qué franja hay holgura y qué
+          estamento concentra el uso.</td></tr>
+        <tr><td><b>Estratégico</b></td><td>Dirección, DESAM, Servicio de Salud</td>
+          <td>Horas-box perdidas por ausentismo, tasa de recuperación y evidencia trazable para
+          decisiones de dotación y de espacio físico.</td></tr>
+      </table>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section id="instalar">
+      <h2><span class="num-sec">02</span> Cómo abrirla</h2>
+
+      <p>DistriBox es un único archivo <code>index.html</code>. No requiere instalación, ni servidor,
+      ni base de datos, ni permisos de informática.</p>
+
+      <div class="flujo">
+        <div class="flujo-p"><div class="flujo-h">OPCIÓN A</div><div class="flujo-t">Desde internet</div>
+          <div class="flujo-d">Abrir la dirección de GitHub Pages donde esté publicada.</div></div>
+        <div class="flujo-p"><div class="flujo-h">OPCIÓN B</div><div class="flujo-t">Desde el computador</div>
+          <div class="flujo-d">Descargar <code>index.html</code> y abrirlo con doble clic.</div></div>
+        <div class="flujo-p"><div class="flujo-h">OPCIÓN C</div><div class="flujo-t">Desde un pendrive</div>
+          <div class="flujo-d">Copiar el archivo y abrirlo en cualquier equipo, incluso sin internet.</div></div>
+      </div>
+
+      <div class="banda banda-alerta">
+        <span class="ico" aria-hidden="true">!</span>
+        <div><p><b>Lo único que necesita internet</b> es la importación de archivos Excel, que usa una
+        librería externa. Todo lo demás —el tablero, la jornada, las estadísticas, el informe—
+        funciona sin conexión. Si la librería no carga, DistriBox lo avisa y sigue operando.</p></div>
+      </div>
+
+      <p>Recomendación práctica: deje el archivo en el escritorio del equipo del mesón o del SOME,
+      y agregue la página a favoritos si la usa desde internet.</p>
+    </section>
+
+    <!-- 3 -->
+    <section id="configurar">
+      <h2><span class="num-sec">03</span> Configuración inicial</h2>
+
+      <p>Hay dos caminos según lo que tenga a mano. Si ya existe una planilla de distribución en
+      Excel, el camino corto es cargarla. Si no, se arma desde cero con el asistente.</p>
+
+      <h3 id="excel">Camino corto: cargar desde Excel</h3>
+
+      <p>DistriBox lee planillas que no son tablas, sino varias mini-matrices «hora × día» repartidas
+      por la hoja: el formato habitual de las distribuciones de box. Localiza cada grilla buscando la
+      celda <code>Hora</code> y toma el nombre del box de la celda inmediatamente superior.</p>
+
+      <div class="pasos">
+        <div class="paso"><div class="paso-n">1</div><div>
+          <h4>Abra el módulo «Proyecto y datos»</h4>
+          <p>Está al final de la barra lateral.</p></div></div>
+        <div class="paso"><div class="paso-n">2</div><div>
+          <h4>Arrastre el Excel a la zona de carga</h4>
+          <p>O haga clic para elegirlo. Formatos: <code>.xlsx</code>, <code>.xlsm</code>, <code>.xls</code>.
+          El archivo se procesa en su navegador y no se sube a ningún servidor.</p></div></div>
+        <div class="paso"><div class="paso-n">3</div><div>
+          <h4>Revise el control de calidad</h4>
+          <p>Debajo aparece un informe que se recalcula en cada carga: conflictos de simultaneidad,
+          box con rejillas horarias distintas, funcionarios sin estamento, celdas ambiguas y box sin
+          programación. Léalo: suele revelar problemas que la planilla escondía.</p></div></div>
+        <div class="paso"><div class="paso-n">4</div><div>
+          <h4>Complete lo que el Excel no traía</h4>
+          <p>Identificación del establecimiento (módulo 05) y estamento de cada funcionario
+          (módulo 07). El estamento es el campo más importante: sin él, los filtros por profesión,
+          la sugerencia de reasignación y la estadística quedan incompletas.</p></div></div>
+      </div>
+
+      <div class="banda banda-info">
+        <span class="ico" aria-hidden="true">◆</span>
+        <div><p>Al cargar un Excel nuevo más adelante, DistriBox <b>conserva los estamentos ya
+        registrados</b> emparejando por nombre. No hay que volver a llenarlos cada mes.</p></div>
+      </div>
+
+      <h3 id="cero">Camino largo: empezar desde cero</h3>
+
+      <p>Si abre DistriBox en blanco, o si usa el botón <b>«Vaciar y empezar de cero»</b>, arranca un
+      asistente de cinco pasos que muestra qué falta y lleva al módulo correspondiente.</p>
+
+      <div class="tabla-env">
+      <table>
+        <tr><th>Paso</th><th>Módulo</th><th>Qué definir</th><th>Atajo disponible</th></tr>
+        <tr><td>1</td><td>05 Establecimiento</td><td>Nombre, tipo, comuna, Servicio de Salud</td><td>—</td></tr>
+        <tr><td>2</td><td>05 Establecimiento</td><td>Días de funcionamiento y bloques horarios</td>
+          <td>Botón «Usar rejilla de ejemplo» crea una jornada de 08:00 a 17:00 con pausa y colación</td></tr>
+        <tr><td>3</td><td>06 Box clínicos</td><td>Catastro de espacios físicos</td>
+          <td>Botón «Agregar varios» crea <code>Box 1</code>…<code>Box N</code> de una vez</td></tr>
+        <tr><td>4</td><td>07 Recurso humano</td><td>Funcionarios y su estamento</td>
+          <td>Puede usar nombres simbólicos y reemplazarlos después</td></tr>
+        <tr><td>5</td><td>08 Programación base</td><td>La semana tipo, celda por celda</td>
+          <td>Botón «Copiar este día a otro» replica un día completo</td></tr>
+      </table>
+      </div>
+
+      <div class="banda banda-ok">
+        <span class="ico" aria-hidden="true">✓</span>
+        <div><p><b>¿Sólo quiere ver cómo funciona?</b> En «Proyecto y datos», el botón
+        <b>«Cargar datos de ejemplo»</b> arma un CESFAM ficticio con 8 box y 10 funcionarios.
+        Sirve para probar sin usar datos reales y para mostrarle la herramienta al equipo.</p></div>
+      </div>
+
+      <h3>Detalle importante: en qué bloques opera cada box</h3>
+      <p>En la ficha de cada box (módulo 06) hay una lista de bloques horarios con casillas.
+      Desmarque aquellos en que ese box no se usa. Con eso DistriBox deja de contarlos como capacidad
+      disponible, y el porcentaje de ocupación del box deja de estar artificialmente bajo.</p>
+    </section>
+
+    <!-- 4 -->
+    <section id="dia">
+      <h2><span class="num-sec">04</span> El día a día</h2>
+
+      <p>Este es el corazón de la herramienta y debería tomar entre cinco y diez minutos diarios.</p>
+
+      <div class="flujo">
+        <div class="flujo-p"><div class="flujo-h">AL LLEGAR</div><div class="flujo-t">Abrir jornada</div>
+          <div class="flujo-d">Módulo 01</div></div>
+        <div class="flujo-p"><div class="flujo-h">08:00–09:00</div><div class="flujo-t">Cargar ausencias</div>
+          <div class="flujo-d">Módulo 01</div></div>
+        <div class="flujo-p"><div class="flujo-h">ENSEGUIDA</div><div class="flujo-t">Resolver la bandeja</div>
+          <div class="flujo-d">Módulo 02</div></div>
+        <div class="flujo-p"><div class="flujo-h">DURANTE EL DÍA</div><div class="flujo-t">Novedades</div>
+          <div class="flujo-d">Módulos 01 y 03</div></div>
+        <div class="flujo-p"><div class="flujo-h">AL TERMINAR</div><div class="flujo-t">Cerrar jornada</div>
+          <div class="flujo-d">Módulo 01</div></div>
+      </div>
+
+      <h3 id="ausencia">Registrar una ausencia</h3>
+
+      <p>Esta es la acción que más se repite y la que más tiempo ahorra. Se registra
+      <b>la persona</b>, no cada box por separado.</p>
+
+      <div class="pasos">
+        <div class="paso"><div class="paso-n">1</div><div>
+          <h4>Módulo 01 → «Ausencia de funcionario»</h4></div></div>
+        <div class="paso"><div class="paso-n">2</div><div>
+          <h4>Elija al funcionario y el motivo</h4>
+          <p>Los motivos están estandarizados: licencia médica, permiso administrativo, feriado legal,
+          capacitación, comisión de servicio, cometido funcionario, día compensatorio, ronda rural o
+          terreno, reunión técnica, operativo, ausencia sin aviso, permiso sin goce.</p></div></div>
+        <div class="paso"><div class="paso-n">3</div><div>
+          <h4>Indique el alcance</h4>
+          <p>Toda la jornada, sólo mañana, sólo tarde, o bloques sueltos marcándolos uno a uno.
+          Hay botones rápidos para las tres primeras opciones.</p></div></div>
+        <div class="paso"><div class="paso-n">4</div><div>
+          <h4>Revise el impacto antes de confirmar</h4>
+          <p>DistriBox muestra una línea como <i>«esta ausencia afecta 8 bloques-box programados»</i>.
+          Al confirmar, <b>libera todos esos box de una sola vez</b> y los manda a la bandeja de
+          reasignación.</p></div></div>
+      </div>
+
+      <h3 id="reasignar">Reasignar un box</h3>
+
+      <p>En el módulo 02, cada box liberado aparece como una tarjeta que <b>espera una decisión</b>.
+      Mientras no la tenga, cuenta como capacidad en riesgo y el módulo muestra un contador en la
+      barra lateral.</p>
+
+      <p>Para cada box, DistriBox propone candidatos ya filtrados: descarta a quien está ausente y a
+      quien ya está atendiendo en otro box en ese mismo bloque. Sobre los que quedan, calcula un
+      puntaje:</p>
+
+      <div class="tabla-env">
+      <table>
+        <tr><th>Criterio</th><th class="num">Peso</th><th>Por qué</th></tr>
+        <tr><td>Registrado hoy como presencia extra</td><td class="num">+35</td>
+          <td>Es el reemplazo o refuerzo que efectivamente llegó</td></tr>
+        <tr><td>Su box habitual está bloqueado en ese bloque</td><td class="num">+30</td>
+          <td>Es un desplazado: necesita espacio ahora</td></tr>
+        <tr><td>Está hoy en el establecimiento y sin box en ese bloque</td><td class="num">+25</td>
+          <td>Está disponible de verdad</td></tr>
+        <tr><td>El box es afín a su estamento</td><td class="num">+18</td>
+          <td>El espacio está equipado para esa profesión</td></tr>
+        <tr><td>Coincide con el servicio del box</td><td class="num">+12</td>
+          <td>Continuidad de programa</td></tr>
+        <tr><td>Ya usa ese box en la semana tipo</td><td class="num">hasta +12</td>
+          <td>Conoce el espacio y su equipamiento</td></tr>
+        <tr><td>No tiene programación ese día</td><td class="num">−18</td>
+          <td>Llamarlo es otra decisión, no una reubicación</td></tr>
+      </table>
+      </div>
+
+      <div class="banda banda-alerta">
+        <span class="ico" aria-hidden="true">!</span>
+        <div><p><b>El puntaje ordena, no decide.</b> Cada candidato muestra su fundamento en texto,
+        no sólo el número, para que quien está en el mesón pueda discrepar con criterio. DistriBox
+        nunca asigna por su cuenta.</p></div>
+      </div>
+
+      <h4>Si no hay a quién asignarle el box</h4>
+      <p>Use el botón <b>«No se reasigna…»</b> y elija un motivo: sin demanda que reubicar, no hay
+      profesional disponible, no alcanza a abrirse agenda, box de uso exclusivo, el reemplazo no
+      llegó, u otro.</p>
+
+      <div class="banda banda-info">
+        <span class="ico" aria-hidden="true">◆</span>
+        <div><p>Registrar el motivo es lo único que después permite explicar la pérdida. Sin él, el
+        informe dice <i>«se perdieron 12 horas»</i> y no se puede hacer nada con eso. Con él, dice
+        <i>«se perdieron 12 horas, 8 porque no había profesional disponible»</i>, que sí es un insumo
+        para una decisión de dotación.</p></div>
+      </div>
+
+      <h4>El problema inverso</h4>
+      <p>Más abajo, el mismo módulo lista <b>quién está hoy en el establecimiento sin box asignado</b>,
+      por bloque horario, y los box que la programación ya dejaba libres de base. Son dos cosas
+      distintas: uno es capacidad que nunca se comprometió, el otro es capacidad que se rompió hoy.</p>
+
+      <h3>Otras novedades del día</h3>
+      <div class="tabla-env">
+      <table>
+        <tr><th>Novedad</th><th>Cuándo usarla</th><th>Qué provoca</th></tr>
+        <tr><td><b>Box fuera de servicio</b></td>
+          <td>Falla de equipamiento, mantención, falta de insumos, aseo terminal, obra</td>
+          <td>Bloquea el espacio. Quien lo tenía programado aparece como desplazado y sube de
+          prioridad al reasignar otros box.</td></tr>
+        <tr><td><b>Liberar box</b></td>
+          <td>Terminó antes, se suspendió la actividad, el profesional se trasladó</td>
+          <td>Deja el box disponible sin que haya una ausencia formal.</td></tr>
+        <tr><td><b>Reservar box</b></td>
+          <td>Operativo, campaña, reunión, docencia</td>
+          <td>Aparta el espacio para que nadie lo tome.</td></tr>
+        <tr><td><b>Presencia extra</b></td>
+          <td>Llega un reemplazo, un refuerzo, una extensión horaria, un estudiante o becado</td>
+          <td>Lo registra como presente aunque no esté en la programación, y pasa a ser candidato
+          prioritario en la bandeja.</td></tr>
+      </table>
+      </div>
+
+      <h3 id="cerrar">Cerrar la jornada</h3>
+      <p>Al terminar el día, cierre la jornada en el módulo 01. Si quedan liberaciones sin decidir,
+      DistriBox avisa antes de cerrar.</p>
+
+      <div class="banda banda-alerta">
+        <span class="ico" aria-hidden="true">!</span>
+        <div><p><b>Un día sin jornada abierta no es un día perfecto: es un día sin datos.</b>
+        El análisis de capacidad sólo considera las jornadas efectivamente registradas. Si el día
+        transcurrió sin novedades, ábralo y ciérrelo igual: eso deja constancia de que se cumplió
+        el 100 % de lo programado.</p></div>
+      </div>
+
+      <h4>Corregir algo</h4>
+      <p>Cada novedad aparece en la línea de tiempo del módulo 01 con un botón <b>Deshacer</b>.
+      DistriBox no guarda un estado calculado: guarda la lista de eventos y recalcula todo cada vez.
+      Por eso deshacer es simplemente quitar el evento, y los indicadores se recalculan solos.
+      Para corregir un día ya cerrado, reábralo, corrija y vuelva a cerrarlo.</p>
+    </section>
+
+    <!-- 5 -->
+    <section id="estados">
+      <h2><span class="num-sec">05</span> Estados del box</h2>
+      <p>El estado se comunica siempre por color, ícono y texto a la vez, nunca sólo por color.</p>
+
+      <div class="estados">
+        <div class="est e1"><div class="est-n">● Disponible</div>
+          <div class="est-d">Sin asignación en la programación. Nunca fue capacidad comprometida.</div></div>
+        <div class="est e2"><div class="est-n">■ Ocupado</div>
+          <div class="est-d">Hay un funcionario, por programación o por reasignación de hoy.</div></div>
+        <div class="est e3"><div class="est-n">✓ Liberado</div>
+          <div class="est-d">Estaba ocupado y se cayó hoy, por ausencia o liberación manual.</div></div>
+        <div class="est e4"><div class="est-n">◆ Reservado</div>
+          <div class="est-d">Apartado para un operativo, campaña, reunión o docencia.</div></div>
+        <div class="est e5"><div class="est-n">✱ Bloqueado</div>
+          <div class="est-d">Fuera de servicio por mantención, falla o falta de insumos.</div></div>
+        <div class="est e6"><div class="est-n">✕ No operativo</div>
+          <div class="est-d">Inhabilitado por un período prolongado.</div></div>
+        <div class="est e7"><div class="est-n">– No asignable</div>
+          <div class="est-d">Bloque institucional: pausa saludable o colación.</div></div>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section id="modulos">
+      <h2><span class="num-sec">06</span> Los módulos</h2>
+
+      <h3>Operación diaria</h3>
+      <div class="mods">
+        <div class="mod"><div class="mod-n">00</div><div class="mod-t">Panel del día</div>
+          <div class="mod-d">Qué se programó, qué se cayó, qué se recuperó y cuánta capacidad se está
+          perdiendo ahora. Es la pantalla de inicio.</div></div>
+        <div class="mod"><div class="mod-n">01</div><div class="mod-t">Jornada y novedades</div>
+          <div class="mod-d">Abrir y cerrar la jornada, registrar todo lo del día y deshacer errores.</div></div>
+        <div class="mod"><div class="mod-n">02</div><div class="mod-t">Reasignación de box</div>
+          <div class="mod-d">La bandeja de box liberados, con candidatos y su fundamento.</div></div>
+        <div class="mod"><div class="mod-n">03</div><div class="mod-t">Pizarra de box</div>
+          <div class="mod-d">Vista de mesón: todos los box en un bloque horario, con filtros y buscador.</div></div>
+        <div class="mod"><div class="mod-n">04</div><div class="mod-t">Vista semanal</div>
+          <div class="mod-d">Matriz box × bloque de la semana tipo, para revisar la programación completa.</div></div>
+      </div>
+
+      <h3>Configuración</h3>
+      <div class="mods">
+        <div class="mod"><div class="mod-n">05</div><div class="mod-t">Establecimiento</div>
+          <div class="mod-d">Identificación, días, rejilla horaria y catálogos de estamentos y programas.</div></div>
+        <div class="mod"><div class="mod-n">06</div><div class="mod-t">Box clínicos</div>
+          <div class="mod-d">Catastro de espacios: sector, servicio afín, estamento afín y bloques en que opera.</div></div>
+        <div class="mod"><div class="mod-n">07</div><div class="mod-t">Recurso humano</div>
+          <div class="mod-d">Dotación y estamentos. Marca cuántos funcionarios quedan por completar.</div></div>
+        <div class="mod"><div class="mod-n">08</div><div class="mod-t">Programación base</div>
+          <div class="mod-d">La semana tipo, editable celda por celda, con fecha de vigencia.</div></div>
+      </div>
+
+      <h3>Análisis</h3>
+      <div class="mods">
+        <div class="mod"><div class="mod-n">09</div><div class="mod-t">Uso y ocupación</div>
+          <div class="mod-d">Estadística estructural de la programación: rankings, mapa de calor,
+          comparación de días y turnos.</div></div>
+        <div class="mod"><div class="mod-n">10</div><div class="mod-t">Capacidad perdida</div>
+          <div class="mod-d">Horas caídas, recuperadas y perdidas, por motivo, estamento, box y franja.</div></div>
+        <div class="mod"><div class="mod-n">11</div><div class="mod-t">Informe técnico</div>
+          <div class="mod-d">Reporte trazable del período, imprimible o guardable como PDF.</div></div>
+      </div>
+
+      <div class="banda banda-info">
+        <span class="ico" aria-hidden="true">◆</span>
+        <div><p><b>Por qué los módulos 09 y 10 están separados.</b> El 09 analiza <i>la programación</i>:
+        cómo está estructurada la semana tipo. El 10 analiza <i>lo que ocurrió</i>: las jornadas
+        registradas. Mezclarlos produce indicadores que no se pueden defender en una reunión.</p></div>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section id="capacidad">
+      <h2><span class="num-sec">07</span> Cómo se cuenta la capacidad perdida</h2>
+
+      <p>Este es el cálculo que sostiene el informe técnico, así que conviene entenderlo bien antes
+      de presentarlo a una jefatura.</p>
+
+      <div class="tabla-env">
+      <table>
+        <tr><th>Concepto</th><th>Definición exacta</th></tr>
+        <tr><td><b>Capacidad programada</b></td>
+          <td>Suma de la duración de los bloques-box que tenían a alguien asignado ese día.
+          <b>No</b> incluye bloques institucionales, ni bloques en que un box no opera, ni box que la
+          programación ya dejaba libres.</td></tr>
+        <tr><td><b>Capacidad caída</b></td>
+          <td>Todos los asignados a ese bloque-box están ausentes, o el box se liberó manualmente.
+          Si queda al menos uno, el box sigue ocupado y se marca como ocupación parcial.</td></tr>
+        <tr><td><b>Capacidad recuperada</b></td>
+          <td>Se registró una reasignación sobre ese mismo bloque-box.</td></tr>
+        <tr><td><b>Capacidad perdida</b></td>
+          <td>La liberación no se reasignó, sea porque se descartó con motivo o porque quedó sin
+          decidir.</td></tr>
+        <tr><td><b>Box fuera de servicio</b></td>
+          <td>Se informa <b>aparte</b>. Un box bloqueado prevalece sobre la ausencia y sus horas no
+          cuentan como caídas ni como cumplidas: es pérdida de infraestructura, no de dotación.</td></tr>
+      </table>
+      </div>
+
+      <div class="panel">
+        <h4 style="margin-top:0">Tasa de recuperación</h4>
+        <p style="font-size:18px;text-align:center;margin:14px 0;font-family:var(--mono)">
+          horas recuperadas ÷ horas caídas</p>
+        <p style="margin-bottom:0">Es el indicador de gestión del proceso. No mide cuánto ausentismo
+        hay —eso el establecimiento no lo controla— sino <b>qué tan bien se reacciona cuando
+        ocurre</b>. Es la cifra que conviene llevar a una reunión de jefatura.</p>
+      </div>
+
+      <p>El balance del día se muestra como una barra de cuatro segmentos que suma exactamente la
+      capacidad programada: cumplido, cayó y se recuperó, cayó y se perdió, y fuera de servicio.</p>
+    </section>
+
+    <!-- 8 -->
+    <section id="guardar">
+      <h2><span class="num-sec">08</span> Guardar y respaldar</h2>
+
+      <div class="banda banda-critico">
+        <span class="ico" aria-hidden="true">⚠</span>
+        <div><p><b>Lo más importante de esta guía.</b> El archivo <code>.json</code> del proyecto es
+        el único respaldo real de su trabajo. Descárguelo con frecuencia desde el botón
+        <b>«↓ Guardar proyecto (.json)»</b> de la barra lateral.</p></div>
+      </div>
+
+      <div class="tabla-env">
+      <table>
+        <tr><th>Mecanismo</th><th>Qué guarda</th><th>Dónde vive</th><th>Cuándo se pierde</th></tr>
+        <tr><td><b>Proyecto <code>.json</code></b></td>
+          <td>Configuración, programación y todas las jornadas con sus eventos</td>
+          <td>Donde usted lo guarde: disco, carpeta de red, correo</td>
+          <td>Sólo si borra el archivo</td></tr>
+        <tr><td><b>Autoguardado</b></td>
+          <td>Lo mismo, como red de seguridad</td>
+          <td>En el navegador de ese equipo</td>
+          <td>Al borrar los datos del sitio, al usar otro navegador o al cambiar de computador</td></tr>
+      </table>
+      </div>
+
+      <h3>Rutina recomendada</h3>
+      <ul>
+        <li><b>Cada viernes</b>, guarde el proyecto <code>.json</code> en la carpeta de red del
+        establecimiento, con la fecha en el nombre.</li>
+        <li><b>Antes de vaciar o reconfigurar</b> cualquier cosa, guarde primero.</li>
+        <li><b>Si trabajan desde varios equipos</b>, acuerden que sólo uno lleva el registro diario y
+        comparte el <code>.json</code>. Cada navegador tiene su propia copia y no se sincronizan
+        entre sí.</li>
+      </ul>
+
+      <h3>Exportaciones disponibles</h3>
+      <ul>
+        <li><b>Estado actual (CSV)</b> — fotografía del día, para pegar en un correo o un acta.</li>
+        <li><b>Historial de jornadas (CSV)</b> — todos los eventos registrados, para analizar aparte.</li>
+        <li><b>Uso programado (CSV)</b> — la semana tipo desglosada.</li>
+        <li><b>Capacidad perdida (CSV)</b> — resumen por jornada más el detalle de cada liberación.</li>
+        <li><b>Informe técnico</b> — documento completo, imprimible o guardable como PDF.</li>
+      </ul>
+    </section>
+
+    <!-- 9 -->
+    <section id="privacidad">
+      <h2><span class="num-sec">09</span> Privacidad</h2>
+
+      <ul>
+        <li>Todo el procesamiento ocurre en el navegador. <b>No hay servidor y ningún dato sale del
+        dispositivo.</b></li>
+        <li>DistriBox <b>no contiene ni procesa información clínica ni de pacientes</b>. Trabaja con
+        espacios físicos, horarios y dotación.</li>
+        <li>El informe técnico y las exportaciones admiten <b>anonimizar los nombres</b>, conservando
+        estamento, servicio, box, horario y métricas.</li>
+        <li>Si va a publicar DistriBox en un sitio público, el botón <b>«Descargar index.html sin
+        datos»</b> genera una copia de la aplicación sin ninguna nómina incorporada.</li>
+      </ul>
+
+      <div class="banda banda-alerta">
+        <span class="ico" aria-hidden="true">!</span>
+        <div><p>Los motivos de ausencia incluyen «licencia médica» como categoría administrativa de
+        dotación. DistriBox <b>no registra diagnósticos ni detalles de salud</b> de los funcionarios,
+        y no debe usarse para eso.</p></div>
+      </div>
+    </section>
+
+    <!-- 10 -->
+    <section id="faq">
+      <h2><span class="num-sec">10</span> Preguntas frecuentes</h2>
+
+      <details class="faq"><summary>¿Reemplaza a la planilla Excel?</summary>
+        <div><p>Reemplaza su uso diario. La planilla sigue sirviendo como documento formal de la
+        programación; DistriBox la lee y agrega lo que la planilla no puede hacer: registrar lo que
+        pasó cada día y medirlo.</p></div></details>
+
+      <details class="faq"><summary>¿Se puede usar desde varios computadores a la vez?</summary>
+        <div><p>Sí, pero cada navegador tiene su propia copia y no se sincronizan. Para el registro
+        diario conviene que un solo equipo lleve la jornada. Para consultar, cualquiera puede abrir
+        la aplicación y cargar el <code>.json</code> compartido.</p>
+        <p>Si necesitan varios puntos de registro simultáneos, DistriBox en su forma actual no
+        alcanza: eso requeriría un servidor.</p></div></details>
+
+      <details class="faq"><summary>¿Qué pasa si me equivoco al registrar algo?</summary>
+        <div><p>Cada novedad tiene un botón «Deshacer» en la línea de tiempo del módulo 01. Si el día
+        ya está cerrado, reábralo, corrija y ciérrelo de nuevo. Los indicadores se recalculan solos.</p></div></details>
+
+      <details class="faq"><summary>¿Hay que registrar todos los días, incluso los tranquilos?</summary>
+        <div><p>Sí. Un día sin jornada registrada no entra en el cálculo, así que no es un día
+        perfecto sino un día sin datos. Abrir y cerrar una jornada sin novedades toma segundos y deja
+        constancia de que se cumplió el 100 % de lo programado.</p></div></details>
+
+      <details class="faq"><summary>¿Y si un box lo comparten dos profesionales?</summary>
+        <div><p>En la programación base, un bloque puede tener varios funcionarios. Si uno se ausenta
+        y el otro queda, el box sigue ocupado y se marca como ocupación parcial. Sólo se considera
+        caído cuando se ausentan todos.</p></div></details>
+
+      <details class="faq"><summary>¿Por qué aparecen conflictos de simultaneidad al cargar mi Excel?</summary>
+        <div><p>Porque un mismo nombre figura en dos box en el mismo día y bloque. Casi siempre son
+        dos personas distintas con la misma abreviatura —inicial más apellido—, no un error de
+        agenda. Créelas como funcionarios separados en el módulo 07 y el conflicto desaparece.</p></div></details>
+
+      <details class="faq"><summary>¿Por qué insiste tanto con el estamento?</summary>
+        <div><p>Porque sin él tres cosas quedan cojas: los filtros por profesión, la sugerencia de
+        reasignación —no puede calcular afinidad— y toda la estadística por estamento. DistriBox no
+        lo deduce ni lo inventa: lo deja marcado como pendiente con un contador visible.</p></div></details>
+
+      <details class="faq"><summary>¿Funciona en el teléfono?</summary>
+        <div><p>Sí. La interfaz se adapta a pantallas pequeñas y el menú pasa a un botón. Para el
+        registro diario es cómoda; para la configuración inicial y los análisis conviene un
+        computador.</p></div></details>
+
+      <details class="faq"><summary>¿Sirve para un COSAM, una posta rural o un SAPU?</summary>
+        <div><p>Sí. El tipo de establecimiento, los días —incluidos sábado y domingo—, la rejilla
+        horaria, los box, los estamentos y los programas son todos configurables. Nada está fijo en
+        el código.</p></div></details>
+
+      <details class="faq"><summary>¿Qué pasa si no tengo internet?</summary>
+        <div><p>Todo funciona salvo la importación de Excel. Si ya cargó su programación o tiene su
+        <code>.json</code>, puede operar sin conexión indefinidamente.</p></div></details>
+    </section>
+
+    <!-- 11 -->
+    <section id="glosario">
+      <h2><span class="num-sec">11</span> Glosario</h2>
+      <dl class="glos">
+        <dt>Bloque-box</dt>
+        <dd>La unidad de capacidad: un box en un bloque horario de un día. Es lo que se cuenta,
+        se cae, se recupera o se pierde.</dd>
+
+        <dt>Bloque institucional</dt>
+        <dd>Pausa saludable, colación u otro bloque no asignable. No cuenta como capacidad.</dd>
+
+        <dt>Jornada</dt>
+        <dd>El registro de un día. Tiene ciclo de vida: sin abrir, abierta, cerrada. Sólo las
+        jornadas abiertas entran en el análisis.</dd>
+
+        <dt>Programación base</dt>
+        <dd>La semana tipo: quién ocupa cada box en cada bloque. Cambia pocas veces y tiene fecha
+        de vigencia.</dd>
+
+        <dt>Oportunidad</dt>
+        <dd>Un bloque-box que estaba programado y quedó libre hoy. Requiere una decisión: reasignar
+        o descartar con motivo.</dd>
+
+        <dt>Presencia extra</dt>
+        <dd>Alguien que está hoy sin estar en la programación: reemplazo, refuerzo, extensión
+        horaria, estudiante o becado.</dd>
+
+        <dt>Desplazado</dt>
+        <dd>Funcionario cuyo box habitual quedó bloqueado y necesita otro espacio.</dd>
+
+        <dt>Tasa de recuperación</dt>
+        <dd>Horas recuperadas dividido por horas caídas. Mide la reacción del establecimiento, no
+        el ausentismo.</dd>
+
+        <dt>Estamento</dt>
+        <dd>La profesión del funcionario. Habilita filtros, sugerencias y estadística por profesión.</dd>
+      </dl>
+    </section>
+
+    <div class="pie">
+      <p><b>DistriBox 2.0</b> — Distribución y uso de box clínicos · APS Chile.<br>
+      Herramienta libre. Los datos permanecen en el dispositivo de quien la usa.<br>
+      Esta guía es un archivo HTML autocontenido: puede guardarla, imprimirla o convertirla en PDF
+      desde el botón del encabezado.</p>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// Tema claro / oscuro, recordado en este navegador cuando se puede.
+(function(){
+  var b=document.getElementById('tema');
+  try{ var t=localStorage.getItem('distribox_guia_tema');
+       if(t) document.documentElement.setAttribute('data-tema',t); }catch(e){}
+  b.addEventListener('click',function(){
+    var act=document.documentElement.getAttribute('data-tema');
+    if(!act) act = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'oscuro':'claro';
+    var nuevo = act==='oscuro' ? 'claro':'oscuro';
+    document.documentElement.setAttribute('data-tema',nuevo);
+    try{ localStorage.setItem('distribox_guia_tema',nuevo); }catch(e){}
+  });
+  // Resalta la sección visible en el índice.
+  var secs=[].slice.call(document.querySelectorAll('section[id]'));
+  var links={}; [].forEach.call(document.querySelectorAll('.indice a'),function(a){
+    links[a.getAttribute('href').slice(1)]=a; });
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        var a=links[e.target.id]; if(!a) return;
+        if(e.isIntersecting){
+          [].forEach.call(document.querySelectorAll('.indice a'),function(x){
+            x.style.color=''; x.style.borderLeftColor=''; x.style.fontWeight=''; });
+          a.style.color='var(--marca)'; a.style.borderLeftColor='var(--marca)'; a.style.fontWeight='650';
+        }
+      });
+    },{rootMargin:'-70px 0px -70% 0px'});
+    secs.forEach(function(s){ io.observe(s); });
+  }
+})();
+</script>
+</body>
+</html>
