@@ -251,8 +251,9 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 <section class="lamina">
   <div class="kicker">El indicador</div>
   <h2>Capacidad perdida</h2>
-  <p class="sub">Cada jornada cerrada aporta al balance. La base es sólo la capacidad comprometida:
-  no se cuentan bloques institucionales ni box que la programación ya dejaba libres.</p>
+  <p class="sub">Se mide en <b>puesto-hora</b>: un box con tres puestos que pierde a una persona
+  pierde un puesto, no el box entero. La base es sólo la capacidad comprometida: no se cuentan
+  bloques institucionales, colaciones ni puestos que la programación nunca asignó.</p>
   <div class="barra">
     <div style="width:74%;background:var(--info)">Se cumplió</div>
     <div style="width:12%;background:var(--libre)">Recuperado</div>
@@ -331,16 +332,16 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
         <li><b>14 tipos de establecimiento</b>: CESFAM, CECOSF, CESCOF, COSAM, PSR, SAR, SAPU, SUR,
         hospital comunitario y otros</li>
         <li><b>Días configurables</b> de lunes a domingo, porque SAPU, SAR y SUR operan fin de semana</li>
-        <li><b>Rejilla horaria propia</b>, con bloques institucionales y con los bloques en que cada
-        box efectivamente opera</li>
+        <li><b>Rejilla horaria propia</b>, con bloques institucionales y colación escalonada box
+        por box</li>
       </ul>
     </div>
     <div>
       <ul class="lista">
+        <li><b>Puestos simultáneos por box</b>: una oficina de tres escritorios se mide como tres
+        puestos, no como un box</li>
         <li><b>21 estamentos</b> y <b>25 programas</b> de la cartera APS, todos editables</li>
-        <li><b>Nombres simbólicos</b>: crear <code>Box 1…N</code> en lote para armar un
-        establecimiento sin usar datos reales</li>
-        <li><b>Importación desde Excel</b> de las planillas de distribución que ya existen</li>
+        <li><b>Importación desde Excel</b> y creación de <code>Box 1…N</code> en lote</li>
       </ul>
     </div>
   </div>

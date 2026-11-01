@@ -103,12 +103,20 @@ Tres capas separadas, que cambian a ritmos distintos:
 
 ### Cómo se cuentan las horas
 
-- **Capacidad programada**: suma de la duración de los bloques-box que tenían a alguien asignado.
-  Los bloques institucionales y los bloques en que un box no opera no cuentan.
-- **Caída**: todos los asignados a ese bloque-box están ausentes, o el box se liberó manualmente.
-- **Recuperada**: se registró una reasignación sobre ese mismo bloque-box.
-- **Perdida**: la liberación no se reasignó, se haya descartado con motivo o quede sin decidir.
+La unidad es el **puesto-hora**, no el box-hora: cada box declara cuántos puestos simultáneos tiene,
+y un box de tres puestos que pierde a una persona pierde un puesto, no el box entero.
+
+- **Capacidad instalada**: puestos × duración, sobre todos los bloques en que cada box opera.
+- **Capacidad programada**: los puestos que la programación asigna a alguien. No cuentan los bloques
+  institucionales, las celdas marcadas como colación o no asignables, ni los bloques en que un box
+  no opera.
+- **Instalada ociosa**: la diferencia entre ambas. Puestos que existen y nunca se comprometieron.
+- **Caída**: puestos cuyo funcionario está ausente, o el box se liberó manualmente.
+- **Recuperada**: puestos caídos que fueron reasignados.
+- **Perdida**: lo caído que no se reasignó, se haya descartado con motivo o quede sin decidir.
 - **Box fuera de servicio**: se informa aparte. Es pérdida de infraestructura, no de dotación.
+- **Jornadas planificadas** (creadas por adelantado al cargar una licencia por período) quedan fuera
+  del cálculo hasta que se abren.
 
 ---
 

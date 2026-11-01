@@ -376,10 +376,34 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
         Sirve para probar sin usar datos reales y para mostrarle la herramienta al equipo.</p></div>
       </div>
 
-      <h3>Detalle importante: en qué bloques opera cada box</h3>
-      <p>En la ficha de cada box (módulo 06) hay una lista de bloques horarios con casillas.
-      Desmarque aquellos en que ese box no se usa. Con eso DistriBox deja de contarlos como capacidad
-      disponible, y el porcentaje de ocupación del box deja de estar artificialmente bajo.</p>
+      <h3>Dos detalles que evitan que un box parezca subutilizado</h3>
+
+      <h4>1. Puestos simultáneos</h4>
+      <p>En la ficha de cada box (módulo 06), el campo <b>puestos simultáneos</b> indica cuántas
+      personas pueden atender a la vez en ese espacio. Un box clínico habitual tiene 1. Una oficina
+      compartida con tres escritorios tiene 3.</p>
+
+      <div class="banda banda-info">
+        <span class="ico" aria-hidden="true">◆</span>
+        <div><p>Esto importa porque <b>la capacidad se cuenta en puesto-hora, no en box-hora</b>.
+        Si una oficina con tres puestos tiene a tres personas programadas y una falta, se cae
+        <b>un puesto</b>, no el box entero: el espacio sigue ocupado por las otras dos y queda un
+        puesto disponible para reubicar a alguien.</p></div>
+      </div>
+
+      <h4>2. En qué bloques opera cada box</h4>
+      <p>Más abajo en la misma ficha hay una lista de bloques horarios con casillas. Desmarque
+      aquellos en que ese box no se usa nunca. Con eso DistriBox deja de contarlos como capacidad
+      disponible.</p>
+
+      <h4>3. Colación escalonada</h4>
+      <p>La colación rara vez coincide entre box: en muchos establecimientos se reparte entre las
+      12:00 y las 15:00 según el equipo. Si deja ese rango simplemente libre, el box aparece
+      subutilizado cuando en realidad no estaba disponible.</p>
+      <p>La solución está en el módulo 08: haga clic en la celda y marque el <b>tipo de bloque</b>
+      como <b>Colación</b>. Esa celda deja de contarse como capacidad, tanto en el numerador como en
+      el denominador. Para hacerlo masivamente —por grupo de box y tramo horario— use el botón
+      <b>«Marcar colación en bloque…»</b>.</p>
     </section>
 
     <!-- 4 -->
@@ -415,14 +439,30 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
           capacitación, comisión de servicio, cometido funcionario, día compensatorio, ronda rural o
           terreno, reunión técnica, operativo, ausencia sin aviso, permiso sin goce.</p></div></div>
         <div class="paso"><div class="paso-n">3</div><div>
-          <h4>Indique el alcance</h4>
+          <h4>Indique el período</h4>
+          <p>Los campos <b>Desde</b> y <b>Hasta</b> permiten registrar una licencia de varios días en
+          una sola acción. DistriBox crea la ausencia en todas las fechas del rango y salta los días
+          en que el establecimiento no funciona.</p></div></div>
+        <div class="paso"><div class="paso-n">4</div><div>
+          <h4>Indique el alcance horario</h4>
           <p>Toda la jornada, sólo mañana, sólo tarde, o bloques sueltos marcándolos uno a uno.
           Hay botones rápidos para las tres primeras opciones.</p></div></div>
-        <div class="paso"><div class="paso-n">4</div><div>
+        <div class="paso"><div class="paso-n">5</div><div>
           <h4>Revise el impacto antes de confirmar</h4>
-          <p>DistriBox muestra una línea como <i>«esta ausencia afecta 8 bloques-box programados»</i>.
-          Al confirmar, <b>libera todos esos box de una sola vez</b> y los manda a la bandeja de
-          reasignación.</p></div></div>
+          <p>DistriBox muestra una línea como <i>«esta ausencia afecta 7 jornadas y 31 puestos
+          programados»</i>. Al confirmar, <b>libera todos esos puestos de una sola vez</b> y los manda
+          a la bandeja de reasignación.</p></div></div>
+      </div>
+
+      <div class="banda banda-alerta">
+        <span class="ico" aria-hidden="true">📅</span>
+        <div><p><b>Jornadas planificadas.</b> Si el período incluye fechas futuras, esas jornadas se
+        crean en estado <i>planificada</i>: quedan con la ausencia ya cargada pero <b>no entran en el
+        análisis de capacidad</b> hasta que usted las abra el día que corresponde. Así no se cuenta
+        como perdido algo que todavía no ocurre. Cuando llega el día, DistriBox se lo recuerda con un
+        aviso y un botón para abrirlas.</p>
+        <p>Para eliminar una licencia completa use <b>«Quitar período»</b>: borra el registro en todas
+        las fechas de una vez.</p></div>
       </div>
 
       <h3 id="reasignar">Reasignar un box</h3>
@@ -528,8 +568,12 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
       <div class="estados">
         <div class="est e1"><div class="est-n">● Disponible</div>
           <div class="est-d">Sin asignación en la programación. Nunca fue capacidad comprometida.</div></div>
+        <div class="est e2"><div class="est-n">◐ Parcial</div>
+          <div class="est-d">El box tiene varios puestos y sólo algunos están ocupados. Quedan puestos
+          libres, sea porque nunca se programaron o porque alguien faltó.</div></div>
         <div class="est e2"><div class="est-n">■ Ocupado</div>
-          <div class="est-d">Hay un funcionario, por programación o por reasignación de hoy.</div></div>
+          <div class="est-d">Todos los puestos del box están ocupados, por programación o por
+          reasignación de hoy.</div></div>
         <div class="est e3"><div class="est-n">✓ Liberado</div>
           <div class="est-d">Estaba ocupado y se cayó hoy, por ausencia o liberación manual.</div></div>
         <div class="est e4"><div class="est-n">◆ Reservado</div>
@@ -538,8 +582,12 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
           <div class="est-d">Fuera de servicio por mantención, falla o falta de insumos.</div></div>
         <div class="est e6"><div class="est-n">✕ No operativo</div>
           <div class="est-d">Inhabilitado por un período prolongado.</div></div>
+        <div class="est e7"><div class="est-n">☕ Colación</div>
+          <div class="est-d">Declarada para ese box en ese bloque. No cuenta como capacidad ni como
+          subutilización.</div></div>
         <div class="est e7"><div class="est-n">– No asignable</div>
-          <div class="est-d">Bloque institucional: pausa saludable o colación.</div></div>
+          <div class="est-d">Bloque institucional común a todos los box, o celda marcada como no
+          asignable para este box.</div></div>
       </div>
     </section>
 
@@ -600,24 +648,41 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
       <p>Este es el cálculo que sostiene el informe técnico, así que conviene entenderlo bien antes
       de presentarlo a una jefatura.</p>
 
+      <div class="banda banda-info">
+        <span class="ico" aria-hidden="true">◆</span>
+        <div><p><b>La unidad es el puesto-hora.</b> No el box-hora. Un box con tres puestos aporta
+        tres puesto-horas por cada hora que opera, y si pierde a una persona pierde un puesto-hora,
+        no tres.</p></div>
+      </div>
+
       <div class="tabla-env">
       <table>
         <tr><th>Concepto</th><th>Definición exacta</th></tr>
+        <tr><td><b>Capacidad instalada</b></td>
+          <td>Puestos × duración, sumado sobre todos los bloques en que cada box opera. Es el techo
+          físico del establecimiento.</td></tr>
         <tr><td><b>Capacidad programada</b></td>
-          <td>Suma de la duración de los bloques-box que tenían a alguien asignado ese día.
-          <b>No</b> incluye bloques institucionales, ni bloques en que un box no opera, ni box que la
-          programación ya dejaba libres.</td></tr>
+          <td>Los puestos que la programación base asigna a algún funcionario. <b>No</b> incluye
+          bloques institucionales, celdas marcadas como colación o no asignables, ni bloques en que
+          un box no opera.</td></tr>
+        <tr><td><b>Capacidad instalada ociosa</b></td>
+          <td>La diferencia entre las dos anteriores: puestos que existen pero que la programación
+          nunca comprometió. No es una pérdida del día; es una decisión de programación.</td></tr>
         <tr><td><b>Capacidad caída</b></td>
-          <td>Todos los asignados a ese bloque-box están ausentes, o el box se liberó manualmente.
-          Si queda al menos uno, el box sigue ocupado y se marca como ocupación parcial.</td></tr>
+          <td>Puestos cuyo funcionario asignado está ausente, o el box se liberó manualmente.
+          Si en un box de tres puestos falta uno, cae un puesto y el box queda en estado
+          <i>parcial</i>.</td></tr>
         <tr><td><b>Capacidad recuperada</b></td>
-          <td>Se registró una reasignación sobre ese mismo bloque-box.</td></tr>
+          <td>Puestos caídos que fueron reasignados. Un box puede recibir varias reasignaciones si
+          cayeron varios puestos.</td></tr>
         <tr><td><b>Capacidad perdida</b></td>
-          <td>La liberación no se reasignó, sea porque se descartó con motivo o porque quedó sin
+          <td>Lo caído que no se reasignó, sea porque se descartó con motivo o porque quedó sin
           decidir.</td></tr>
         <tr><td><b>Box fuera de servicio</b></td>
           <td>Se informa <b>aparte</b>. Un box bloqueado prevalece sobre la ausencia y sus horas no
           cuentan como caídas ni como cumplidas: es pérdida de infraestructura, no de dotación.</td></tr>
+        <tr><td><b>Jornadas planificadas</b></td>
+          <td>Quedan fuera del cálculo hasta que se abran. Todavía no ocurrieron.</td></tr>
       </table>
       </div>
 
@@ -727,10 +792,27 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
         perfecto sino un día sin datos. Abrir y cerrar una jornada sin novedades toma segundos y deja
         constancia de que se cumplió el 100 % de lo programado.</p></div></details>
 
-      <details class="faq"><summary>¿Y si un box lo comparten dos profesionales?</summary>
-        <div><p>En la programación base, un bloque puede tener varios funcionarios. Si uno se ausenta
-        y el otro queda, el box sigue ocupado y se marca como ocupación parcial. Sólo se considera
-        caído cuando se ausentan todos.</p></div></details>
+      <details class="faq"><summary>¿Y si un box lo comparten dos o tres profesionales?</summary>
+        <div><p>Declare los <b>puestos simultáneos</b> en la ficha del box (módulo 06) y asigne a
+        todos en la misma celda de la programación. Si uno se ausenta, cae <b>un puesto</b>: el box
+        pasa a estado <i>parcial</i> y aparece en la bandeja de reasignación indicando cuántos
+        puestos quedaron libres. Los demás siguen atendiendo con normalidad.</p>
+        <p>Si asigna más funcionarios que puestos, DistriBox avisa y cuenta sólo hasta la capacidad
+        declarada.</p></div></details>
+
+      <details class="faq"><summary>La colación es escalonada entre las 12 y las 15. ¿Cómo la registro?</summary>
+        <div><p>No la deje simplemente libre: así el box aparece subutilizado. En el módulo 08, haga
+        clic en la celda que corresponda y cambie el <b>tipo de bloque</b> a <b>Colación</b>. Esa
+        celda deja de contar como capacidad.</p>
+        <p>Como cada box suele tener su propio horario de colación, hágalo por box y por tramo. El
+        botón <b>«Marcar colación en bloque…»</b> permite aplicarlo a varios box, bloques y días a la
+        vez.</p></div></details>
+
+      <details class="faq"><summary>¿Puedo registrar una licencia de varios días de una sola vez?</summary>
+        <div><p>Sí. En el modal de ausencia indique el período en <b>Desde</b> y <b>Hasta</b>.
+        DistriBox registra la ausencia en todas las fechas del rango, saltando los días en que el
+        establecimiento no funciona, y crea las jornadas futuras en estado <i>planificada</i>.</p>
+        <p>Para deshacerla completa, use <b>«Quitar período»</b>.</p></div></details>
 
       <details class="faq"><summary>¿Por qué aparecen conflictos de simultaneidad al cargar mi Excel?</summary>
         <div><p>Porque un mismo nombre figura en dos box en el mismo día y bloque. Casi siempre son
@@ -761,9 +843,24 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
     <section id="glosario">
       <h2><span class="num-sec">11</span> Glosario</h2>
       <dl class="glos">
-        <dt>Bloque-box</dt>
-        <dd>La unidad de capacidad: un box en un bloque horario de un día. Es lo que se cuenta,
+        <dt>Puesto</dt>
+        <dd>Una posición de atención dentro de un box. Un box clínico habitual tiene uno; una oficina
+        compartida puede tener varios.</dd>
+
+        <dt>Puesto-hora</dt>
+        <dd>La unidad de capacidad: un puesto durante un bloque horario. Es lo que se cuenta,
         se cae, se recupera o se pierde.</dd>
+
+        <dt>Capacidad instalada</dt>
+        <dd>Todos los puestos por todos los bloques en que operan. El techo físico.</dd>
+
+        <dt>Capacidad ociosa</dt>
+        <dd>Puestos que existen pero que la programación no comprometió. No es pérdida del día: es
+        una decisión de programación.</dd>
+
+        <dt>Jornada planificada</dt>
+        <dd>Jornada futura creada por adelantado, habitualmente al cargar una licencia por período.
+        No entra en el análisis hasta que se abre.</dd>
 
         <dt>Bloque institucional</dt>
         <dd>Pausa saludable, colación u otro bloque no asignable. No cuenta como capacidad.</dd>
